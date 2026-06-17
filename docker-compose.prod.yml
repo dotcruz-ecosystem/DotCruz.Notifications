@@ -7,7 +7,7 @@ services:
       - "5050:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - Settings__ApiKey=${API_KEY}
+      - Settings__ApiKey=${DOT_CRUZ_API_KEY}
       - ConnectionStrings__MongoDb=${MONGO_CONNECTION_STRING}
       - Settings__MongoDbSettings__DatabaseName=${MONGO_DATABASE_NAME}
       - Settings__AWS__Region=${AWS_REGION}
