@@ -1,6 +1,9 @@
 using CommonTestUtilities.Commands.Notifications;
 using CommonTestUtilities.Entities;
+using CommonTestUtilities.Entities.Notifications;
 using CommonTestUtilities.Entities.Templates;
+using DotCruz.Notifications.Application.Common.Utils;
+using DotCruz.Notifications.Domain.Entities.Tenants;
 using CommonTestUtilities.Factories;
 using CommonTestUtilities.InlineData;
 using CommonTestUtilities.Repositories;
@@ -86,6 +89,74 @@ public class CreateNotificationCommandHandlerTests
         var exception = await Assert.ThrowsAsync<NotificationTypeNotSupportedException>(act);
 
         Assert.Contains(ResourceMessagesException.NOTIFICATION_TYPE_NOT_SUPPORTED, exception.GetErrorsMessages());
+    }
+
+    [Theory]
+    [InlineData("pt-BR", "Você está recebendo este e-mail porque possui um cadastro em", "Descadastrar")]
+    [InlineData("en", "You are receiving this email because you are registered at", "Unsubscribe")]
+    [InlineData("es", "You are receiving this email because you are registered at", "Unsubscribe")] // Fallback to en
+    public async Task Success_With_TenantBranding_Internationalized(string culture, string expectedReceivingText, string expectedUnsubscribeText)
+    {
+        var tenantId = Guid.NewGuid();
+        var command = CreateNotificationCommandBuilder.Build(
+            type: IntegrationNotificationType.Email,
+            culture: culture);
+
+        var notification = EmailNotificationBuilder.Build(
+            culture: culture,
+            tenantId: tenantId
+        );
+
+        var (headerHtml, footerHtml) = EmailBrandingBuilder.Build(
+            tenantName: "Shop Test",
+            tenantLogoUrl: "https://logo.png",
+            tenantWebsite: "https://shop.com",
+            tenantAddress: "Street 1",
+            unsubscribeUrl: "https://shop.com/unsub"
+        );
+        var tenantSettings = new TenantSettings(tenantId, headerHtml, footerHtml);
+
+        var strategy = new NotificationFactoryStrategyBuilder(NotificationType.Email)
+            .Create(notification)
+            .Build();
+        var strategies = new NotificationFactoryStrategyListBuilder()
+            .Add(strategy)
+            .Build();
+
+        var repository = new NotificationRepositoryBuilder().Build();
+        var templateRepository = new TemplateRepositoryBuilder().Build();
+        var publishService = new PublishNotificationServiceBuilder().Build();
+        
+        var templateEngine = new Mock<ITemplateEngine>();
+        templateEngine.Setup(x => x.Render(It.IsAny<string>(), It.IsAny<Dictionary<string, object>?>()))
+            .Returns<string, Dictionary<string, object>?>((raw, data) => raw);
+
+        var scheduler = new Mock<INotificationScheduler>();
+        
+        var tenantSettingsRepository = new Mock<ITenantSettingsRepository>();
+        tenantSettingsRepository.Setup(x => x.GetByTenantIdAsync(tenantId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tenantSettings);
+
+        var tenantProvider = new Mock<ITenantProvider>();
+        tenantProvider.Setup(t => t.TenantId).Returns(tenantId);
+
+        var handler = new CreateNotificationCommandHandler(
+            repository,
+            templateRepository,
+            tenantSettingsRepository.Object,
+            strategies,
+            publishService,
+            templateEngine.Object,
+            scheduler.Object,
+            tenantProvider.Object);
+
+        var result = await handler.Handle(command, TestContext.Current.CancellationToken);
+
+        Assert.Equal(notification.Id, result);
+        Assert.NotNull(notification.Body);
+        Assert.Contains(expectedReceivingText, notification.Body);
+        Assert.Contains(expectedUnsubscribeText, notification.Body);
+        Assert.Contains("Shop Test", notification.Body);
     }
 
     private static CreateNotificationCommandHandler CreateHandler(IEnumerable<INotificationFactoryStrategy>? strategies = null, Template? template = null)

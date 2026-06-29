@@ -248,5 +248,86 @@ namespace DotCruz.Notifications.Domain.Exceptions.Resources {
                 return ResourceManager.GetString("TENANT_ID_REQUIRED", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Tenant name is required..
+        /// </summary>
+        public static string TENANT_NAME_EMPTY {
+            get {
+                return ResourceManager.GetString("TENANT_NAME_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Tenant logo URL is required..
+        /// </summary>
+        public static string TENANT_LOGO_URL_EMPTY {
+            get {
+                return ResourceManager.GetString("TENANT_LOGO_URL_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Tenant logo URL must be a valid absolute URL..
+        /// </summary>
+        public static string TENANT_LOGO_URL_INVALID {
+            get {
+                return ResourceManager.GetString("TENANT_LOGO_URL_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Tenant website URL is required..
+        /// </summary>
+        public static string TENANT_WEBSITE_URL_EMPTY {
+            get {
+                return ResourceManager.GetString("TENANT_WEBSITE_URL_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Tenant website URL must be a valid absolute URL..
+        /// </summary>
+        public static string TENANT_WEBSITE_URL_INVALID {
+            get {
+                return ResourceManager.GetString("TENANT_WEBSITE_URL_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Tenant address is required..
+        /// </summary>
+        public static string TENANT_ADDRESS_EMPTY {
+            get {
+                return ResourceManager.GetString("TENANT_ADDRESS_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Unsubscribe URL is required..
+        /// </summary>
+        public static string UNSUBSCRIBE_URL_EMPTY {
+            get {
+                return ResourceManager.GetString("UNSUBSCRIBE_URL_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Unsubscribe URL must be a valid absolute URL..
+        /// </summary>
+        public static string UNSUBSCRIBE_URL_INVALID {
+            get {
+                return ResourceManager.GetString("UNSUBSCRIBE_URL_INVALID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Header background color must be a valid hex color code (e.g. #ffffff or #fff)..
+        /// </summary>
+        public static string HEADER_BACKGROUND_COLOR_INVALID {
+            get {
+                return ResourceManager.GetString("HEADER_BACKGROUND_COLOR_INVALID", resourceCulture);
+            }
+        }
     }
 }

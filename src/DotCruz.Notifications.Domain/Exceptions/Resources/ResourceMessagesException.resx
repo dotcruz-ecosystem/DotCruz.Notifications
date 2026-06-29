@@ -180,4 +180,31 @@
   <data name="TENANT_ID_REQUIRED" xml:space="preserve">
     <value>TenantId is required.</value>
   </data>
+  <data name="TENANT_NAME_EMPTY" xml:space="preserve">
+    <value>Tenant name is required.</value>
+  </data>
+  <data name="TENANT_LOGO_URL_EMPTY" xml:space="preserve">
+    <value>Tenant logo URL is required.</value>
+  </data>
+  <data name="TENANT_LOGO_URL_INVALID" xml:space="preserve">
+    <value>Tenant logo URL must be a valid absolute URL.</value>
+  </data>
+  <data name="TENANT_WEBSITE_URL_EMPTY" xml:space="preserve">
+    <value>Tenant website URL is required.</value>
+  </data>
+  <data name="TENANT_WEBSITE_URL_INVALID" xml:space="preserve">
+    <value>Tenant website URL must be a valid absolute URL.</value>
+  </data>
+  <data name="TENANT_ADDRESS_EMPTY" xml:space="preserve">
+    <value>Tenant address is required.</value>
+  </data>
+  <data name="UNSUBSCRIBE_URL_EMPTY" xml:space="preserve">
+    <value>Unsubscribe URL is required.</value>
+  </data>
+  <data name="UNSUBSCRIBE_URL_INVALID" xml:space="preserve">
+    <value>Unsubscribe URL must be a valid absolute URL.</value>
+  </data>
+  <data name="HEADER_BACKGROUND_COLOR_INVALID" xml:space="preserve">
+    <value>Header background color must be a valid hex color code (e.g. #ffffff or #fff).</value>
+  </data>
 </root>

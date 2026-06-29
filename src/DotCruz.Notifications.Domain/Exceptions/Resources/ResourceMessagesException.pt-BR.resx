@@ -180,4 +180,31 @@
   <data name="TENANT_ID_REQUIRED" xml:space="preserve">
     <value>O TenantId é obrigatório.</value>
   </data>
+  <data name="TENANT_NAME_EMPTY" xml:space="preserve">
+    <value>O nome do Tenant é obrigatório.</value>
+  </data>
+  <data name="TENANT_LOGO_URL_EMPTY" xml:space="preserve">
+    <value>A URL do logo do Tenant é obrigatória.</value>
+  </data>
+  <data name="TENANT_LOGO_URL_INVALID" xml:space="preserve">
+    <value>A URL do logo do Tenant deve ser uma URL absoluta válida.</value>
+  </data>
+  <data name="TENANT_WEBSITE_URL_EMPTY" xml:space="preserve">
+    <value>A URL do site do Tenant é obrigatória.</value>
+  </data>
+  <data name="TENANT_WEBSITE_URL_INVALID" xml:space="preserve">
+    <value>A URL do site do Tenant deve ser uma URL absoluta válida.</value>
+  </data>
+  <data name="TENANT_ADDRESS_EMPTY" xml:space="preserve">
+    <value>O endereço do Tenant é obrigatório.</value>
+  </data>
+  <data name="UNSUBSCRIBE_URL_EMPTY" xml:space="preserve">
+    <value>A URL de descadastro (unsubscribe) é obrigatória.</value>
+  </data>
+  <data name="UNSUBSCRIBE_URL_INVALID" xml:space="preserve">
+    <value>A URL de descadastro (unsubscribe) deve ser uma URL absoluta válida.</value>
+  </data>
+  <data name="HEADER_BACKGROUND_COLOR_INVALID" xml:space="preserve">
+    <value>A cor de fundo do cabeçalho deve ser um código de cor hexadecimal válido (ex: #ffffff ou #fff).</value>
+  </data>
 </root>
