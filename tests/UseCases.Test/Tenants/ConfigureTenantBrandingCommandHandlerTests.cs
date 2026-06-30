@@ -39,11 +39,11 @@ public class ConfigureTenantBrandingCommandHandlerTests
         repositoryMock.Verify(x => x.AddAsync(
             It.Is<TenantSettings>(s => 
                 s.TenantId == tenantId && 
-                s.HeaderHtml.Contains("Shop A") && 
-                s.HeaderHtml.Contains("https://shopa.com/logo.png") && 
-                s.HeaderHtml.Contains("#fafafa") && 
-                s.FooterHtml.Contains("Street 1") && 
-                s.FooterHtml.Contains("https://shopa.com/optout")), 
+                s.TenantName == "Shop A" && 
+                s.TenantLogoUrl == "https://shopa.com/logo.png" && 
+                s.HeaderBackgroundColor == "#fafafa" && 
+                s.TenantAddress == "Street 1" && 
+                s.UnsubscribeUrl == "https://shopa.com/optout"), 
             It.IsAny<CancellationToken>()), 
             Times.Once);
 
@@ -54,7 +54,15 @@ public class ConfigureTenantBrandingCommandHandlerTests
     public async Task Success_UpdateExistingSettings()
     {
         var tenantId = Guid.NewGuid();
-        var existingSettings = new TenantSettings(tenantId, "old-header", "old-footer");
+        var existingSettings = new TenantSettings(
+            tenantId,
+            tenantName: "Old Shop",
+            tenantLogoUrl: "https://old.com/logo.png",
+            tenantWebsite: "https://old.com",
+            tenantAddress: "Old Address",
+            unsubscribeUrl: "https://old.com/unsub",
+            headerBackgroundColor: "#000000"
+        );
 
         var command = new ConfigureTenantBrandingCommand(
             TenantName: "Shop B",
@@ -79,10 +87,11 @@ public class ConfigureTenantBrandingCommandHandlerTests
         repositoryMock.Verify(x => x.UpdateAsync(
             It.Is<TenantSettings>(s => 
                 s.TenantId == tenantId && 
-                s.HeaderHtml.Contains("Shop B") && 
-                s.HeaderHtml.Contains("https://shopb.com/logo.png") && 
-                s.FooterHtml.Contains("Street 2") && 
-                s.FooterHtml.Contains("https://shopb.com/optout")), 
+                s.TenantName == "Shop B" && 
+                s.TenantLogoUrl == "https://shopb.com/logo.png" && 
+                s.HeaderBackgroundColor == "#ffffff" && 
+                s.TenantAddress == "Street 2" && 
+                s.UnsubscribeUrl == "https://shopb.com/optout"), 
             It.IsAny<CancellationToken>()), 
             Times.Once);
 

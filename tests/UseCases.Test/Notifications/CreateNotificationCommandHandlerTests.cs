@@ -107,14 +107,15 @@ public class CreateNotificationCommandHandlerTests
             tenantId: tenantId
         );
 
-        var (headerHtml, footerHtml) = EmailBrandingBuilder.Build(
+        var tenantSettings = new TenantSettings(
+            tenantId,
             tenantName: "Shop Test",
             tenantLogoUrl: "https://logo.png",
             tenantWebsite: "https://shop.com",
             tenantAddress: "Street 1",
-            unsubscribeUrl: "https://shop.com/unsub"
+            unsubscribeUrl: "https://shop.com/unsub",
+            headerBackgroundColor: "#ffffff"
         );
-        var tenantSettings = new TenantSettings(tenantId, headerHtml, footerHtml);
 
         var strategy = new NotificationFactoryStrategyBuilder(NotificationType.Email)
             .Create(notification)

@@ -98,10 +98,9 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
                 if (notification.TenantId != Guid.Empty)
                 {
                     var tenantSettings = await _tenantSettingsRepository.GetByTenantIdAsync(notification.TenantId, cancellationToken);
-                    if (tenantSettings != null && (!string.IsNullOrEmpty(tenantSettings.HeaderHtml) || !string.IsNullOrEmpty(tenantSettings.FooterHtml)))
+                    if (tenantSettings != null)
                     {
-                        var header = EmailBrandingBuilder.Translate(tenantSettings.HeaderHtml, notification.Culture);
-                        var footer = EmailBrandingBuilder.Translate(tenantSettings.FooterHtml, notification.Culture);
+                        var (header, footer) = EmailBrandingBuilder.GenerateBranding(tenantSettings, notification.Culture);
                         renderedBody = $"{header}{renderedBody}{footer}";
                         wrapped = true;
                     }

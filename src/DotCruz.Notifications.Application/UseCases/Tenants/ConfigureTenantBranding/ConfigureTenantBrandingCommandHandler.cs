@@ -27,25 +27,31 @@ public class ConfigureTenantBrandingCommandHandler : IRequestHandler<ConfigureTe
         if (!tenantId.HasValue)
             throw new UnauthorizedException(ResourceMessagesException.TENANT_ID_REQUIRED);
 
-        var (headerHtml, footerHtml) = EmailBrandingBuilder.Build(
-            request.TenantName,
-            request.TenantLogoUrl,
-            request.TenantWebsite,
-            request.TenantAddress,
-            request.UnsubscribeUrl,
-            request.HeaderBackgroundColor
-        );
-
         var settings = await _tenantSettingsRepository.GetByTenantIdAsync(tenantId.Value, cancellationToken);
 
         if (settings == null)
         {
-            settings = new TenantSettings(tenantId.Value, headerHtml, footerHtml);
+            settings = new TenantSettings(
+                tenantId.Value,
+                request.TenantName,
+                request.TenantLogoUrl,
+                request.TenantWebsite,
+                request.TenantAddress,
+                request.UnsubscribeUrl,
+                request.HeaderBackgroundColor
+            );
             await _tenantSettingsRepository.AddAsync(settings, cancellationToken);
         }
         else
         {
-            settings.UpdateBranding(headerHtml, footerHtml);
+            settings.UpdateBranding(
+                request.TenantName,
+                request.TenantLogoUrl,
+                request.TenantWebsite,
+                request.TenantAddress,
+                request.UnsubscribeUrl,
+                request.HeaderBackgroundColor
+            );
             await _tenantSettingsRepository.UpdateAsync(settings, cancellationToken);
         }
     }
