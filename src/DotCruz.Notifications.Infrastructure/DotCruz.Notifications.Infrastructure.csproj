@@ -28,4 +28,8 @@
     <ProjectReference Include="..\DotCruz.Notifications.Application\DotCruz.Notifications.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Emails\**\*.liquid" />
+  </ItemGroup>
+
 </Project>

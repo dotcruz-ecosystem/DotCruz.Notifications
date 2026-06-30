@@ -6,6 +6,7 @@ using DotCruz.Notifications.Domain.Entities.Notifications;
 using DotCruz.Notifications.Domain.Entities.Templates;
 using DotCruz.Notifications.Domain.Enums.Notifications;
 using DotCruz.Notifications.Domain.Interfaces;
+using DotCruz.Notifications.Domain.Interfaces.Repositories;
 using DotCruz.Notifications.Infrastructure.DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -19,7 +20,6 @@ namespace WebApi.Test;
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     public Guid TenantId { get; } = Guid.NewGuid();
-    private Template _template = default!;
     private Notification _notification = default!;
     private string _apiToken = default!;
     private readonly string _databaseName = "Notifications_Test_" + Guid.NewGuid().ToString("N");
@@ -75,16 +75,20 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             services.Remove(descriptor);
     }
 
-    public Guid GetTemplateId() => _template.Id;
-    public string GetTemplateCode() => _template.Code;
+    public Guid GetTemplateId()
+    {
+        using var scope = Services.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<ITemplateRepository>();
+        var template = repo.GetByCodeAsync("CreateUserCommand", "pt-BR", CancellationToken.None).GetAwaiter().GetResult();
+        return template?.Id ?? Guid.Empty;
+    }
+
+    public string GetTemplateCode() => "CreateUserCommand";
     public string GetApiToken() => _apiToken;
 
     private void StartDatabase(NotificationDbContext dbContext)
     {
-        _template = TemplateBuilder.Build(culture: "pt-BR", tenantId: TenantId);
         _notification = NotificationBuilder.Build(NotificationType.Email, tenantId: TenantId);
-
-        dbContext.Templates.InsertOne(_template);
         dbContext.Notifications.InsertOne(_notification);
     }
 
