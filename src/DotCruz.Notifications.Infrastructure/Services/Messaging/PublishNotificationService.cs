@@ -17,7 +17,7 @@ public class PublishNotificationService : IPublishNotificationService
     public PublishNotificationService(IAmazonSQS sqsClient, IOptions<AwsSettings> awsSettings)
     {
         _sqsClient = sqsClient;
-        _queueUrl = awsSettings.Value.SqsQueueArn;
+        _queueUrl = awsSettings.Value.SqsQueueUrl;
     }
 
     public async Task PublishNotificationCreatedEvent(SendNotificationMessage payload, CancellationToken cancellationToken)

@@ -1,9 +1,6 @@
 using DotCruz.Notifications.Api.Controllers.Base;
 using DotCruz.Notifications.Application.DTOs.Base;
-using DotCruz.Notifications.Application.UseCases.Templates.CreateTemplate;
-using DotCruz.Notifications.Application.UseCases.Templates.DeleteTemplate;
 using DotCruz.Notifications.Application.UseCases.Templates.GetTemplateByCode;
-using DotCruz.Notifications.Application.UseCases.Templates.UpdateTemplate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

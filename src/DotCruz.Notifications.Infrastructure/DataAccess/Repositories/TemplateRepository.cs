@@ -1,6 +1,5 @@
 using DotCruz.Notifications.Domain.Entities.Templates;
 using DotCruz.Notifications.Domain.Enums.Notifications;
-using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
 using System.Collections.Concurrent;
 
@@ -23,7 +22,7 @@ public class TemplateRepository : ITemplateRepository
         ("ActivateAccountCommand", "en", "Account activation")
     };
 
-    public TemplateRepository(NotificationDbContext context, ITenantProvider tenantProvider)
+    public TemplateRepository()
     {
         InitializeTemplates();
     }
