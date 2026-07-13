@@ -1,4 +1,4 @@
-﻿using CommonTestUtilities.Commands.Notifications;
+using CommonTestUtilities.Commands.Notifications;
 using CommonTestUtilities.InlineData;
 using DotCruz.Notifications.Application.DTOs.Base;
 using DotCruz.Notifications.Contracts.Enums.Notifications;
@@ -75,13 +75,6 @@ public class CreateNotificationTest : NotificationClassFixture
         var response = await DoPost(ENDPOINT, command.Message, culture: culture);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-
-        var responseData = await response.Content.ReadFromJsonAsync<ErrorResponseDto>(cancellationToken: TestContext.Current.CancellationToken);
-
-        var expectedMessage = ResourceMessagesException.ResourceManager.GetString("NO_TOKEN", new CultureInfo(culture));
-
-        Assert.NotNull(responseData);
-        Assert.Contains(expectedMessage, responseData.Errors);
     }
 
     [Theory]
@@ -93,13 +86,6 @@ public class CreateNotificationTest : NotificationClassFixture
         var response = await DoPost(ENDPOINT, command.Message, token: "invalidToken", culture: culture);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-
-        var responseData = await response.Content.ReadFromJsonAsync<ErrorResponseDto>(cancellationToken: TestContext.Current.CancellationToken);
-
-        var expectedMessage = ResourceMessagesException.ResourceManager.GetString("TOKEN_INVALID", new CultureInfo(culture));
-
-        Assert.NotNull(responseData);
-        Assert.Contains(expectedMessage, responseData.Errors);
     }
 
     [Theory]

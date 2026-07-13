@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
 using DotCruz.Notifications.Api.Filters;
 using DotCruz.Notifications.Api.Middlewares;
-using DotCruz.Notifications.Api.Security;
 using DotCruz.Notifications.Application;
 using DotCruz.Notifications.CrossCutting;
 using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Infrastructure;
+using DotCruz.Shared.Security;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,8 +26,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddOpenApi();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ITenantProvider, TenantResolver>();
 
+builder.Services.AddSharedSecurity(builder.Configuration);
 builder.Services.AddCrossCutting(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -44,11 +44,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<CultureMiddleware>();
+
+app.UseSharedSecurityAuditLog();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseMiddleware<CultureMiddleware>();
 
 app.Run();
 

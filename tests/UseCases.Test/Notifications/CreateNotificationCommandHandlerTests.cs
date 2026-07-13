@@ -17,6 +17,7 @@ using DotCruz.Notifications.Domain.Exceptions.BaseExceptions;
 using DotCruz.Notifications.Domain.Exceptions.Resources;
 using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
+using DotCruz.Shared.Security.Context;
 using Moq;
 
 namespace UseCases.Test.Notifications;
@@ -138,8 +139,8 @@ public class CreateNotificationCommandHandlerTests
         tenantSettingsRepository.Setup(x => x.GetByTenantIdAsync(tenantId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(tenantSettings);
 
-        var tenantProvider = new Mock<ITenantProvider>();
-        tenantProvider.Setup(t => t.TenantId).Returns(tenantId);
+        var securityContext = new Mock<ISecurityContext>();
+        securityContext.Setup(t => t.TenantId).Returns(tenantId);
 
         var handler = new CreateNotificationCommandHandler(
             repository,
@@ -149,7 +150,7 @@ public class CreateNotificationCommandHandlerTests
             publishService,
             templateEngine.Object,
             scheduler.Object,
-            tenantProvider.Object);
+            securityContext.Object);
 
         var result = await handler.Handle(command, TestContext.Current.CancellationToken);
 
@@ -174,8 +175,8 @@ public class CreateNotificationCommandHandlerTests
 
         var scheduler = new Mock<INotificationScheduler>();
         var tenantSettingsRepository = new Mock<ITenantSettingsRepository>();
-        var tenantProvider = new Mock<ITenantProvider>();
-        tenantProvider.Setup(t => t.TenantId).Returns(Guid.NewGuid());
+        var securityContext = new Mock<ISecurityContext>();
+        securityContext.Setup(t => t.TenantId).Returns(Guid.NewGuid());
 
         if (template != null)
         {
@@ -191,6 +192,6 @@ public class CreateNotificationCommandHandlerTests
             publishService,
             templateEngine.Object,
             scheduler.Object,
-            tenantProvider.Object);
+            securityContext.Object);
     }
 }

@@ -53,11 +53,13 @@ public class NotificationClassFixture : IClassFixture<CustomWebApplicationFactor
     {
         _httpClient.DefaultRequestHeaders.Remove("X-Api-Key");
         _httpClient.DefaultRequestHeaders.Remove("X-Tenant-ID");
+        _httpClient.DefaultRequestHeaders.Remove("X-Service-Name");
 
         if (string.IsNullOrWhiteSpace(token))
             return;
 
         _httpClient.DefaultRequestHeaders.Add("X-Api-Key", token);
         _httpClient.DefaultRequestHeaders.Add("X-Tenant-ID", _factory.TenantId.ToString());
+        _httpClient.DefaultRequestHeaders.Add("X-Service-Name", "CoreAuth");
     }
 }

@@ -24,9 +24,12 @@ services:
       - "5050:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - Settings__ApiKey=DotCruzNotificationsKey
+      - Settings__ServiceAuth__Keys__CoreAuth=CoreAuthDevKey
       - ConnectionStrings__MongoDb=mongodb://mongodb:27017
       - Settings__MongoDbSettings__DatabaseName=NotificationsDb
+      - Settings__Jwt__Issuer=http://localhost:5051
+      - Settings__Jwt__Audience=dotcruz-services
+      - Settings__Jwt__JwksUrl=http://coreauth-api:8080/.well-known/jwks.json
       - Settings__EmailSettings__Host=mailpit
       - Settings__EmailSettings__Port=1025
       - Settings__EmailSettings__EnableSsl=false

@@ -8,6 +8,7 @@ using DotCruz.Notifications.Domain.Exceptions.BaseExceptions;
 using DotCruz.Notifications.Domain.Exceptions.Resources;
 using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
+using DotCruz.Shared.Security.Context;
 using MediatR;
 
 namespace DotCruz.Notifications.Application.UseCases.Notifications.CreateNotification;
@@ -21,7 +22,7 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
     private readonly IPublishNotificationService _publishService;
     private readonly ITemplateEngine _templateEngine;
     private readonly INotificationScheduler _notificationScheduler;
-    private readonly ITenantProvider _tenantProvider;
+    private readonly ISecurityContext _securityContext;
 
     public CreateNotificationCommandHandler(
         INotificationRepository notificationRepository,
@@ -31,7 +32,8 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
         IPublishNotificationService publishService,
         ITemplateEngine templateEngine,
         INotificationScheduler notificationScheduler,
-        ITenantProvider tenantProvider)
+        ISecurityContext securityContext
+    )
     {
         _notificationRepository = notificationRepository;
         _templateRepository = templateRepository;
@@ -40,7 +42,7 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
         _publishService = publishService;
         _templateEngine = templateEngine;
         _notificationScheduler = notificationScheduler;
-        _tenantProvider = tenantProvider;
+        _securityContext = securityContext;
     }
 
     public async Task<Guid> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
@@ -54,7 +56,7 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
         var factory = _factories.FirstOrDefault(f => f.Type == domainType)
             ?? throw new NotificationTypeNotSupportedException();
 
-        var tenantId = _tenantProvider.TenantId;
+        var tenantId = _securityContext.TenantId;
         if (!tenantId.HasValue)
             throw new UnauthorizedException(ResourceMessagesException.TENANT_ID_REQUIRED);
 
@@ -139,20 +141,20 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
             return null;
 
         var template = await _templateRepository.GetByCodeAsync(code, culture ?? "pt-BR", cancellationToken);
-        if (template == null && _tenantProvider.TenantId.HasValue)
+        if (template == null && _securityContext.TenantId.HasValue)
             template = await _templateRepository.GetGlobalByCodeAsync(code, culture ?? "pt-BR", cancellationToken);
         
         if (template == null && culture != "pt-BR")
         {
             template = await _templateRepository.GetByCodeAsync(code, "pt-BR", cancellationToken);
-            if (template == null && _tenantProvider.TenantId.HasValue)
+            if (template == null && _securityContext.TenantId.HasValue)
                 template = await _templateRepository.GetGlobalByCodeAsync(code, "pt-BR", cancellationToken);
         }
 
         if (template == null && culture != "en" && culture != "pt-BR")
         {
             template = await _templateRepository.GetByCodeAsync(code, "en", cancellationToken);
-            if (template == null && _tenantProvider.TenantId.HasValue)
+            if (template == null && _securityContext.TenantId.HasValue)
                 template = await _templateRepository.GetGlobalByCodeAsync(code, "en", cancellationToken);
         }
 

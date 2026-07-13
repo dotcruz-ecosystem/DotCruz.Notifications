@@ -4,6 +4,7 @@ using DotCruz.Notifications.Domain.Exceptions.BaseExceptions;
 using DotCruz.Notifications.Domain.Exceptions.Resources;
 using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
+using DotCruz.Shared.Security.Context;
 using MediatR;
 
 namespace DotCruz.Notifications.Application.UseCases.Tenants.ConfigureTenantBranding;
@@ -11,19 +12,19 @@ namespace DotCruz.Notifications.Application.UseCases.Tenants.ConfigureTenantBran
 public class ConfigureTenantBrandingCommandHandler : IRequestHandler<ConfigureTenantBrandingCommand>
 {
     private readonly ITenantSettingsRepository _tenantSettingsRepository;
-    private readonly ITenantProvider _tenantProvider;
+    private readonly ISecurityContext _securityContext;
 
     public ConfigureTenantBrandingCommandHandler(
         ITenantSettingsRepository tenantSettingsRepository,
-        ITenantProvider tenantProvider)
+        ISecurityContext securityContext)
     {
         _tenantSettingsRepository = tenantSettingsRepository;
-        _tenantProvider = tenantProvider;
+        _securityContext = securityContext;
     }
 
     public async Task Handle(ConfigureTenantBrandingCommand request, CancellationToken cancellationToken)
     {
-        var tenantId = _tenantProvider.TenantId;
+        var tenantId = _securityContext.TenantId;
         if (!tenantId.HasValue)
             throw new UnauthorizedException(ResourceMessagesException.TENANT_ID_REQUIRED);
 

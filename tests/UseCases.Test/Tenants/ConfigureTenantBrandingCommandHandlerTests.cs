@@ -1,8 +1,8 @@
 using DotCruz.Notifications.Application.UseCases.Tenants.ConfigureTenantBranding;
 using DotCruz.Notifications.Domain.Entities.Tenants;
 using DotCruz.Notifications.Domain.Exceptions.BaseExceptions;
-using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
+using DotCruz.Shared.Security.Context;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -25,14 +25,14 @@ public class ConfigureTenantBrandingCommandHandlerTests
             HeaderBackgroundColor: "#fafafa"
         );
 
-        var tenantProviderMock = new Mock<ITenantProvider>();
-        tenantProviderMock.Setup(x => x.TenantId).Returns(tenantId);
+        var securityContextMock = new Mock<ISecurityContext>();
+        securityContextMock.Setup(x => x.TenantId).Returns(tenantId);
 
         var repositoryMock = new Mock<ITenantSettingsRepository>();
         repositoryMock.Setup(x => x.GetByTenantIdAsync(tenantId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((TenantSettings?)null);
 
-        var handler = new ConfigureTenantBrandingCommandHandler(repositoryMock.Object, tenantProviderMock.Object);
+        var handler = new ConfigureTenantBrandingCommandHandler(repositoryMock.Object, securityContextMock.Object);
 
         await handler.Handle(command, TestContext.Current.CancellationToken);
 
@@ -73,14 +73,14 @@ public class ConfigureTenantBrandingCommandHandlerTests
             HeaderBackgroundColor: "#ffffff"
         );
 
-        var tenantProviderMock = new Mock<ITenantProvider>();
-        tenantProviderMock.Setup(x => x.TenantId).Returns(tenantId);
+        var securityContextMock = new Mock<ISecurityContext>();
+        securityContextMock.Setup(x => x.TenantId).Returns(tenantId);
 
         var repositoryMock = new Mock<ITenantSettingsRepository>();
         repositoryMock.Setup(x => x.GetByTenantIdAsync(tenantId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingSettings);
 
-        var handler = new ConfigureTenantBrandingCommandHandler(repositoryMock.Object, tenantProviderMock.Object);
+        var handler = new ConfigureTenantBrandingCommandHandler(repositoryMock.Object, securityContextMock.Object);
 
         await handler.Handle(command, TestContext.Current.CancellationToken);
 
@@ -109,12 +109,12 @@ public class ConfigureTenantBrandingCommandHandlerTests
             UnsubscribeUrl: "https://shopa.com/optout"
         );
 
-        var tenantProviderMock = new Mock<ITenantProvider>();
-        tenantProviderMock.Setup(x => x.TenantId).Returns((Guid?)null);
+        var securityContextMock = new Mock<ISecurityContext>();
+        securityContextMock.Setup(x => x.TenantId).Returns((Guid?)null);
 
         var repositoryMock = new Mock<ITenantSettingsRepository>();
 
-        var handler = new ConfigureTenantBrandingCommandHandler(repositoryMock.Object, tenantProviderMock.Object);
+        var handler = new ConfigureTenantBrandingCommandHandler(repositoryMock.Object, securityContextMock.Object);
 
         Task act() => handler.Handle(command, TestContext.Current.CancellationToken);
 

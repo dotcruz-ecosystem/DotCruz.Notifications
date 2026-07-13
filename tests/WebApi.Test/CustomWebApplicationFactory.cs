@@ -25,6 +25,15 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     private readonly string _databaseName = "Notifications_Test_" + Guid.NewGuid().ToString("N");
     private string? _databaseConnectionString = null;
 
+    public CustomWebApplicationFactory()
+    {
+        Environment.SetEnvironmentVariable("Settings__Jwt__Issuer", "test-issuer");
+        Environment.SetEnvironmentVariable("Settings__Jwt__Audience", "test-audience");
+        Environment.SetEnvironmentVariable("Settings__Jwt__JwksUrl", "https://localhost:8080/.well-known/jwks.json");
+        Environment.SetEnvironmentVariable("Settings__ServiceAuth__Self__Name", "Notifications");
+        Environment.SetEnvironmentVariable("Settings__ServiceAuth__Self__Key", "test-service-key");
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Test")
@@ -32,6 +41,15 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             {
                 var serviceProvider = services.BuildServiceProvider();
                 var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+                var testApiKey = configuration.GetValue<string>("Settings:ApiKey")!;
+
+                services.Configure<DotCruz.Shared.Security.Authentication.ApiKey.ServiceApiKeyOptions>(
+                    DotCruz.Shared.Security.Authentication.ApiKey.ServiceApiKeyDefaults.AuthenticationScheme,
+                    options =>
+                    {
+                        options.Keys["CoreAuth"] = testApiKey;
+                    });
 
                 _databaseConnectionString = configuration.GetConnectionString("MongoDb");
 
