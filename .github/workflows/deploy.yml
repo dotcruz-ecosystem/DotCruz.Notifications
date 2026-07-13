@@ -80,15 +80,19 @@ jobs:
             # Injeta variáveis de ambiente de produção a partir do GitHub Secrets no arquivo .env local
             cat <<EOF > .env
             DOCKER_IMAGE_TAG=ghcr.io/${{ env.REPO_NAME }}/dotcruz-notifications-api:latest
-            DOT_CRUZ_API_KEY=${{ secrets.DOT_CRUZ_API_KEY }}
             MONGO_CONNECTION_STRING=${{ secrets.MONGO_CONNECTION_STRING }}
             MONGO_DATABASE_NAME=${{ secrets.MONGO_DATABASE_NAME }}
             AWS_REGION=${{ secrets.AWS_REGION }}
             AWS_ACCESS_KEY_ID_VPS=${{ secrets.AWS_ACCESS_KEY_ID_VPS }}
             AWS_SECRET_ACCESS_KEY_VPS=${{ secrets.AWS_SECRET_ACCESS_KEY_VPS }}
             AWS_SQS_QUEUE_ARN=${{ secrets.AWS_SQS_QUEUE_ARN }}
+            AWS_SQS_QUEUE_URL=${{ secrets.AWS_SQS_QUEUE_URL }}
             AWS_SCHEDULER_ROLE_ARN=${{ secrets.AWS_SCHEDULER_ROLE_ARN }}
             AWS_SMTP_PARAMETER_PATH=${{ secrets.AWS_SMTP_PARAMETER_PATH }}
+            NOTIFICATIONS_SERVICE_KEY=${{ secrets.NOTIFICATIONS_SERVICE_KEY }}
+            JWT_AUDIENCE=${{ secrets.JWT_AUDIENCE }}
+            JWT_ISSUER=${{ secrets.JWT_ISSUER }}
+            JWT_JWKS_URL=${{ secrets.JWT_JWKS_URL }}
             EOF
             
             # Restringe as permissões do arquivo .env para apenas o dono ler/escrever
