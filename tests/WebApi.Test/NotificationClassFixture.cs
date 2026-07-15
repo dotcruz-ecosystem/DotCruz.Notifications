@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace WebApi.Test;
 
@@ -7,6 +8,12 @@ public class NotificationClassFixture : IClassFixture<CustomWebApplicationFactor
 {
     private readonly HttpClient _httpClient;
     private readonly CustomWebApplicationFactory _factory;
+
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower
+    };
 
     public NotificationClassFixture(CustomWebApplicationFactory factory)
     {
@@ -24,7 +31,7 @@ public class NotificationClassFixture : IClassFixture<CustomWebApplicationFactor
         ChangeRequestCulture(culture);
         AuthorizeRequest(token);
 
-        return await _httpClient.PostAsJsonAsync(endpoint, request);
+        return await _httpClient.PostAsJsonAsync(endpoint, request, JsonSerializerOptions);
     }
 
     protected async Task<HttpResponseMessage> DoPut(string method, object request, string token, string culture = "en")
@@ -32,7 +39,7 @@ public class NotificationClassFixture : IClassFixture<CustomWebApplicationFactor
         ChangeRequestCulture(culture);
         AuthorizeRequest(token);
 
-        return await _httpClient.PutAsJsonAsync(method, request);
+        return await _httpClient.PutAsJsonAsync(method, request, JsonSerializerOptions);
     }
 
     protected async Task<HttpResponseMessage> DoDelete(string method, string token, string culture = "en")
