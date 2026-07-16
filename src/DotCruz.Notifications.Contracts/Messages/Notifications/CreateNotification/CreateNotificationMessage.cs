@@ -1,11 +1,10 @@
-﻿using DotCruz.Notifications.Contracts.Enums.Notifications;
+using DotCruz.Notifications.Contracts.Enums.Notifications;
 
 namespace DotCruz.Notifications.Contracts.Messages.Notifications.CreateNotification;
 
 public record CreateNotificationMessage(
-    Guid ServiceId,
-    IntegrationNotificationType Type,
-    string Recipient,
+    IntegrationNotificationType Type = default,
+    string Recipient = "",
     string? Culture = null,
     string? Body = null,
     string? Title = null,
