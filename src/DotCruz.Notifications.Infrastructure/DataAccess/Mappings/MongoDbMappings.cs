@@ -63,7 +63,7 @@ public static class MongoDbMappings
                 cm.AddKnownType(typeof(PushNotification));
                 cm.AddKnownType(typeof(SmsNotification));
 
-                cm.MapMember(x => x.ServiceId);
+                cm.MapMember(x => x.ServiceName);
                 cm.MapMember(x => x.Type);
                 cm.MapMember(x => x.Culture);
                 cm.MapMember(x => x.Recipient);

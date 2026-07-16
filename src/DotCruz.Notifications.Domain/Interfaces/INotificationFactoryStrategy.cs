@@ -7,7 +7,7 @@ public interface INotificationFactoryStrategy
 {
     NotificationType Type { get; }
     Notification Create(
-        Guid serviceId,
+        string serviceName,
         string recipient,
         string? culture,
         string? body,

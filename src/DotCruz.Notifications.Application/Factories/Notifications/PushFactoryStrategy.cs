@@ -9,7 +9,7 @@ public class PushFactoryStrategy : INotificationFactoryStrategy
     public NotificationType Type => NotificationType.Push;
 
     public Notification Create(
-        Guid serviceId,
+        string serviceName,
         string recipient,
         string? culture,
         string? body,
@@ -20,7 +20,7 @@ public class PushFactoryStrategy : INotificationFactoryStrategy
         Guid tenantId)
     {
         return new PushNotification(
-            serviceId,
+            serviceName,
             recipient,
             culture,
             title ?? string.Empty,

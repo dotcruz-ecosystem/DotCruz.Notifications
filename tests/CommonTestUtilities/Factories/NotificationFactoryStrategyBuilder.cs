@@ -18,7 +18,7 @@ public class NotificationFactoryStrategyBuilder
     public NotificationFactoryStrategyBuilder Create(Notification notification)
     {
         _strategy.Setup(s => s.Create(
-            It.IsAny<Guid>(),
+            It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),

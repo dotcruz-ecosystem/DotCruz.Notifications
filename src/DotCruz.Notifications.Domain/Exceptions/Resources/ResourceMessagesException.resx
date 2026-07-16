@@ -126,6 +126,9 @@
   <data name="SERVICE_ID_EMPTY" xml:space="preserve">
     <value>The service id cannot be null.</value>
   </data>
+  <data name="SERVICE_NAME_EMPTY" xml:space="preserve">
+    <value>The service name cannot be null or empty.</value>
+  </data>
   <data name="ERROR_EMPTY" xml:space="preserve">
     <value>The error message cannot be null.</value>
   </data>

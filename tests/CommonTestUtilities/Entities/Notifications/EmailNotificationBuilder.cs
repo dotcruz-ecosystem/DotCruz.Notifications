@@ -1,3 +1,4 @@
+using System;
 using Bogus;
 using DotCruz.Notifications.Domain.Entities.Notifications;
 
@@ -6,7 +7,7 @@ namespace CommonTestUtilities.Entities.Notifications;
 public class EmailNotificationBuilder
 {
     public static EmailNotification Build(
-        Guid? serviceId = null,
+        string? serviceName = null,
         string? recipient = null,
         string? culture = null,
         string? title = null,
@@ -22,7 +23,7 @@ public class EmailNotificationBuilder
             body = f.Lorem.Paragraph();
 
         return new EmailNotification(
-            serviceId: serviceId ?? f.Random.Guid(),
+            serviceName: serviceName ?? f.Random.Word(),
             recipient: recipient ?? f.Internet.Email(),
             culture: culture ?? "pt-BR",
             title: title ?? f.Lorem.Sentence(),

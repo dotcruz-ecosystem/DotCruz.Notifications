@@ -1,6 +1,6 @@
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using DotCruz.Notifications.Application.Common.Interfaces;
+using DotCruz.Notifications.Application.Common.Interfaces.Messaging;
 using DotCruz.Notifications.Contracts.Messages.Notifications.SendNotification;
 using DotCruz.Notifications.CrossCutting.Settings;
 using DotCruz.Notifications.Domain.Interfaces;

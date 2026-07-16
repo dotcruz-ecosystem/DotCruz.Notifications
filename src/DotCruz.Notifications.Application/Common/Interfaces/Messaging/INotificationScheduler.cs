@@ -1,6 +1,6 @@
 ﻿using DotCruz.Notifications.Contracts.Messages.Notifications.SendNotification;
 
-namespace DotCruz.Notifications.Application.Common.Interfaces;
+namespace DotCruz.Notifications.Application.Common.Interfaces.Messaging;
 
 public interface INotificationScheduler
 {

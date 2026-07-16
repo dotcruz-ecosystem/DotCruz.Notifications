@@ -1,4 +1,4 @@
-﻿using CommonTestUtilities.Commands.Notifications;
+using CommonTestUtilities.Commands.Notifications;
 using DotCruz.Notifications.Application.UseCases.Notifications.CreateNotification;
 using DotCruz.Notifications.Contracts.Enums.Notifications;
 using DotCruz.Notifications.Domain.Exceptions.Resources;
@@ -29,17 +29,7 @@ public class CreateNotificationCommandValidatorTests
         Assert.True(result.IsValid);
     }
 
-    [Fact]
-    public async Task Error_ServiceId_Empty()
-    {
-        var validator = new CreateNotificationCommandValidator();
-        var request = CreateNotificationCommandBuilder.Build(serviceId: Guid.Empty);
 
-        var result = await validator.ValidateAsync(request, TestContext.Current.CancellationToken);
-
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.ErrorMessage.Equals(ResourceMessagesException.SERVICE_ID_EMPTY));
-    }
 
     [Fact]
     public async Task Error_Recipient_Empty()

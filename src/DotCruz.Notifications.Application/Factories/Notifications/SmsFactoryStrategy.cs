@@ -9,7 +9,7 @@ public class SmsFactoryStrategy : INotificationFactoryStrategy
     public NotificationType Type => NotificationType.Sms;
 
     public Notification Create(
-        Guid serviceId,
+        string serviceName,
         string recipient,
         string? culture,
         string? body,
@@ -20,7 +20,7 @@ public class SmsFactoryStrategy : INotificationFactoryStrategy
         Guid tenantId)
     {
         return new SmsNotification(
-            serviceId,
+            serviceName,
             recipient,
             culture,
             body,

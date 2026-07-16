@@ -14,9 +14,18 @@ public class SmsNotificationTest
         var notification = SmsNotificationBuilder.Build();
 
         notification.Should().NotBeNull();
-        notification.ServiceId.Should().NotBeEmpty();
+        notification.ServiceName.Should().NotBeNullOrWhiteSpace();
         notification.Recipient.Should().NotBeNullOrWhiteSpace();
         notification.Culture.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public void Error_ServiceName_Empty()
+    {
+        var action = () => SmsNotificationBuilder.Build(serviceName: string.Empty);
+
+        action.Should().ThrowExactly<ErrorOnValidationException>()
+            .Where(e => e.GetErrorsMessages().Contains(ResourceMessagesException.SERVICE_NAME_EMPTY));
     }
 
     [Fact]

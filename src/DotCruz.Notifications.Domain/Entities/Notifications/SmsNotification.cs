@@ -7,7 +7,7 @@ public class SmsNotification : Notification
     private SmsNotification() { }
 
     public SmsNotification(
-        Guid serviceId,
+        string serviceName,
         string phoneNumber,
         string? culture,
         string? body,
@@ -15,7 +15,7 @@ public class SmsNotification : Notification
         Dictionary<string, object>? templateData,
         DateTimeOffset? scheduledFor,
         Guid tenantId)
-        : base(serviceId, NotificationType.Sms, phoneNumber, culture, body, templateId, templateData, scheduledFor, tenantId)
+        : base(serviceName, NotificationType.Sms, phoneNumber, culture, body, templateId, templateData, scheduledFor, tenantId)
     {
         Validate();
     }

@@ -1,6 +1,6 @@
 using CommonTestUtilities.Entities;
 using CommonTestUtilities.Entities.Templates;
-using DotCruz.Notifications.Application.Common.Interfaces;
+using DotCruz.Notifications.Application.Common.Interfaces.Messaging;
 using DotCruz.Notifications.CrossCutting.Settings;
 using DotCruz.Notifications.Domain.Entities.Notifications;
 using DotCruz.Notifications.Domain.Entities.Templates;

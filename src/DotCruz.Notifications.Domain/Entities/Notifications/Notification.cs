@@ -8,7 +8,7 @@ namespace DotCruz.Notifications.Domain.Entities.Notifications;
 
 public abstract class Notification : TenantEntity
 {
-    public Guid ServiceId { get; private set; }
+    public string ServiceName { get; private set; } = string.Empty;
     public string? CallerReferenceId { get; private set; }
     public string? Context { get; private set; }
     public NotificationType Type { get; private set; }
@@ -30,9 +30,9 @@ public abstract class Notification : TenantEntity
 
     protected Notification() { }
 
-    protected Notification(Guid serviceId, NotificationType type, string recipient, string? culture, string? body, Guid? templateId, Dictionary<string, object>? templateData, DateTimeOffset? scheduledFor, Guid tenantId)
+    protected Notification(string serviceName, NotificationType type, string recipient, string? culture, string? body, Guid? templateId, Dictionary<string, object>? templateData, DateTimeOffset? scheduledFor, Guid tenantId)
     {
-        ServiceId = serviceId;
+        ServiceName = serviceName;
         Type = type;
         Culture = !string.IsNullOrEmpty(culture) ? culture : Culture;
         Recipient = recipient;
@@ -79,8 +79,8 @@ public abstract class Notification : TenantEntity
     {
         var errors = new List<string>();
 
-        if (ServiceId == Guid.Empty)
-            errors.Add(ResourceMessagesException.SERVICE_ID_EMPTY);
+        if (string.IsNullOrWhiteSpace(ServiceName))
+            errors.Add(ResourceMessagesException.SERVICE_NAME_EMPTY);
 
         if (string.IsNullOrEmpty(Recipient))
             errors.Add(ResourceMessagesException.RECIPIENT_EMPTY);

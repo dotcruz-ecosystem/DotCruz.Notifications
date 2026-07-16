@@ -1,13 +1,15 @@
 using Amazon.Scheduler;
 using Amazon.SimpleSystemsManagement;
 using Amazon.SQS;
-using DotCruz.Notifications.Application.Common.Interfaces;
+using DotCruz.Notifications.Application.Common.Interfaces.Messaging;
+using DotCruz.Notifications.Application.Common.Interfaces.Tenants;
 using DotCruz.Notifications.CrossCutting.Settings;
 using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
 using DotCruz.Notifications.Infrastructure.DataAccess;
 using DotCruz.Notifications.Infrastructure.DataAccess.Mappings;
 using DotCruz.Notifications.Infrastructure.DataAccess.Repositories;
+using DotCruz.Notifications.Infrastructure.Services;
 using DotCruz.Notifications.Infrastructure.Services.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +23,7 @@ public static class DependencyInjection
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, Assembly? consumerAssembly = null)
     {
         ConfigureAwsSdk(services, configuration);
-        AddExternalServices(services);
+        AddExternalServices(services, configuration);
         AddMongoDb(services, configuration);
         AddRepositories(services);
     }
@@ -30,14 +32,23 @@ public static class DependencyInjection
     {
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<ITemplateRepository, TemplateRepository>();
-        services.AddScoped<ITenantSettingsRepository, TenantSettingsRepository>();
     }
 
-    private static void AddExternalServices(IServiceCollection services)
+    private static void AddExternalServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IPublishNotificationService, PublishNotificationService>();
         services.AddScoped<INotificationScheduler, EventBridgeNotificationScheduler>();
         services.AddScoped<ISmtpConfigService, SmtpConfigService>();
+
+        services.AddHttpClient<ITenantClient, TenantClient>(client =>
+        {
+            var baseAddress = configuration["Settings:Tenants:BaseAddress"];
+            if (!string.IsNullOrEmpty(baseAddress))
+            {
+                client.BaseAddress = new Uri(baseAddress);
+            }
+        })
+        .AddServiceApiKeyPropagation();
     }
 
     private static void ConfigureAwsSdk(IServiceCollection services, IConfiguration configuration)

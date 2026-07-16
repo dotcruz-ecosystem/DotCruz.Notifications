@@ -1,3 +1,4 @@
+using System;
 using Bogus;
 using DotCruz.Notifications.Domain.Entities.Notifications;
 
@@ -6,7 +7,7 @@ namespace CommonTestUtilities.Entities.Notifications;
 public class SmsNotificationBuilder
 {
     public static SmsNotification Build(
-        Guid? serviceId = null,
+        string? serviceName = null,
         string? phoneNumber = null,
         string? culture = null,
         string? body = null,
@@ -17,7 +18,7 @@ public class SmsNotificationBuilder
     {
         var faker = new Faker<SmsNotification>()
             .CustomInstantiator(f => new SmsNotification(
-                    serviceId: serviceId ?? f.Random.Guid(),
+                    serviceName: serviceName ?? f.Random.Word(),
                     phoneNumber: phoneNumber ?? f.Person.Phone,
                     culture: culture ?? f.PickRandom("pt-BR", "en-US", "es-ES"),
                     body: body ?? f.Lorem.Paragraph(),

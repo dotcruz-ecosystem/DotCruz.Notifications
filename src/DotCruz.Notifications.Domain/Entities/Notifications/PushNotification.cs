@@ -10,7 +10,7 @@ public class PushNotification : Notification
     private PushNotification() { }
 
     public PushNotification(
-        Guid serviceId,
+        string serviceName,
         string deviceToken,
         string? culture,
         string title,
@@ -19,7 +19,7 @@ public class PushNotification : Notification
         Dictionary<string, object>? templateData,
         DateTimeOffset? scheduledFor,
         Guid tenantId)
-        : base(serviceId, NotificationType.Push, deviceToken, culture, body, templateId, templateData, scheduledFor, tenantId)
+        : base(serviceName, NotificationType.Push, deviceToken, culture, body, templateId, templateData, scheduledFor, tenantId)
     {
         Title = title;
         Validate();

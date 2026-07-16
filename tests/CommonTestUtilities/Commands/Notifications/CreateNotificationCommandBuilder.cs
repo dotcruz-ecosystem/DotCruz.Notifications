@@ -1,4 +1,4 @@
-﻿using Bogus;
+using Bogus;
 using DotCruz.Notifications.Application.UseCases.Notifications.CreateNotification;
 using DotCruz.Notifications.Contracts.Enums.Notifications;
 using DotCruz.Notifications.Contracts.Messages.Notifications.CreateNotification;
@@ -21,7 +21,6 @@ public class CreateNotificationCommandBuilder
         var f = new Faker();
 
         var message = new CreateNotificationMessage(
-            ServiceId: serviceId ?? f.Random.Guid(),
             Type: type ?? f.PickRandom<IntegrationNotificationType>(),
             Recipient: recipient ?? f.Internet.Email(),
             Culture: culture,

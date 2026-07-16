@@ -10,7 +10,7 @@ public class EmailNotification : Notification
     private EmailNotification() { }
 
     public EmailNotification(
-        Guid serviceId,
+        string serviceName,
         string recipient,
         string? culture,
         string title,
@@ -19,7 +19,7 @@ public class EmailNotification : Notification
         Dictionary<string, object>? templateData,
         DateTimeOffset? scheduledFor,
         Guid tenantId)
-        : base(serviceId, NotificationType.Email, recipient, culture, body, templateId, templateData, scheduledFor, tenantId)
+        : base(serviceName, NotificationType.Email, recipient, culture, body, templateId, templateData, scheduledFor, tenantId)
     {
         Title = title;
         Validate();

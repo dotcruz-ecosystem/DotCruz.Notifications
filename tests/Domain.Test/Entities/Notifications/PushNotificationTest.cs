@@ -14,10 +14,19 @@ public class PushNotificationTest
         var notification = PushNotificationBuilder.Build();
 
         notification.Should().NotBeNull();
-        notification.ServiceId.Should().NotBeEmpty();
+        notification.ServiceName.Should().NotBeNullOrWhiteSpace();
         notification.Recipient.Should().NotBeNullOrWhiteSpace();
         notification.Title.Should().NotBeNullOrWhiteSpace();
         notification.Culture.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public void Error_ServiceName_Empty()
+    {
+        var action = () => PushNotificationBuilder.Build(serviceName: string.Empty);
+
+        action.Should().ThrowExactly<ErrorOnValidationException>()
+            .Where(e => e.GetErrorsMessages().Contains(ResourceMessagesException.SERVICE_NAME_EMPTY));
     }
 
     [Fact]

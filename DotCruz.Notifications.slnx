@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/Itens de Solução/">
+    <File Path=".github/workflows/deploy.yml" />
+    <File Path=".github/workflows/gitleaks.yml" />
+    <File Path=".github/workflows/publish-contracts.yml" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/DotCruz.Notifications.Api/DotCruz.Notifications.Api.csproj" Id="788cc8b1-3a69-4df9-8c6e-e008446cf45f" />
     <Project Path="src/DotCruz.Notifications.Application/DotCruz.Notifications.Application.csproj" />

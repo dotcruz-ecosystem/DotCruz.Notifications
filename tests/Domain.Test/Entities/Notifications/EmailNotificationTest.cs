@@ -14,19 +14,19 @@ public class EmailNotificationTest
         var notification = EmailNotificationBuilder.Build();
 
         notification.Should().NotBeNull();
-        notification.ServiceId.Should().NotBeEmpty();
+        notification.ServiceName.Should().NotBeNullOrWhiteSpace();
         notification.Recipient.Should().NotBeNullOrWhiteSpace();
         notification.Title.Should().NotBeNullOrWhiteSpace();
         notification.Culture.Should().NotBeNullOrWhiteSpace();
     }
 
     [Fact]
-    public void Error_ServiceId_Empty()
+    public void Error_ServiceName_Empty()
     {
-        var action = () => EmailNotificationBuilder.Build(serviceId: Guid.Empty);
+        var action = () => EmailNotificationBuilder.Build(serviceName: string.Empty);
 
         action.Should().ThrowExactly<ErrorOnValidationException>()
-            .Where(e => e.GetErrorsMessages().Contains(ResourceMessagesException.SERVICE_ID_EMPTY));
+            .Where(e => e.GetErrorsMessages().Contains(ResourceMessagesException.SERVICE_NAME_EMPTY));
     }
 
     [Fact]

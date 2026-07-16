@@ -1,5 +1,4 @@
 using DotCruz.Notifications.Domain.Entities.Templates;
-using DotCruz.Notifications.Domain.Entities.Tenants;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using DotCruz.Notifications.Domain.Entities.Notifications;
@@ -18,7 +17,6 @@ public class NotificationDbContext
 
     public IMongoCollection<Notification> Notifications => _database.GetCollection<Notification>("notifications");
     public IMongoCollection<Template> Templates => _database.GetCollection<Template>("templates");
-    public IMongoCollection<TenantSettings> TenantSettings => _database.GetCollection<TenantSettings>("tenant_settings");
 
     public async Task CreateIndexesAsync()
     {

@@ -138,17 +138,24 @@ public static class EmailBrandingBuilder
         return (headerHtml, footerHtml);
     }
 
+
+
     public static (string HeaderHtml, string FooterHtml) GenerateBranding(
-        Domain.Entities.Tenants.TenantSettings settings,
+        string tenantName,
+        string logoUrl,
+        string website,
+        string address,
+        string unsubscribeUrl,
+        string headerBackgroundColor,
         string? cultureName)
     {
         var (headerHtml, footerHtml) = Build(
-            settings.TenantName,
-            settings.TenantLogoUrl,
-            settings.TenantWebsite,
-            settings.TenantAddress,
-            settings.UnsubscribeUrl,
-            settings.HeaderBackgroundColor);
+            tenantName,
+            logoUrl,
+            website,
+            address,
+            unsubscribeUrl,
+            headerBackgroundColor);
 
         return (Translate(headerHtml, cultureName), Translate(footerHtml, cultureName));
     }

@@ -1,4 +1,4 @@
-﻿using DotCruz.Notifications.Domain.Exceptions.Resources;
+using DotCruz.Notifications.Domain.Exceptions.Resources;
 using FluentValidation;
 
 namespace DotCruz.Notifications.Application.UseCases.Notifications.CreateNotification;
@@ -7,10 +7,6 @@ public class CreateNotificationCommandValidator : AbstractValidator<CreateNotifi
 {
     public CreateNotificationCommandValidator()
     {
-        RuleFor(x => x.Message.ServiceId)
-            .NotEmpty()
-            .WithMessage(ResourceMessagesException.SERVICE_ID_EMPTY);
-
         RuleFor(x => x.Message.Recipient)
             .NotEmpty()
             .WithMessage(ResourceMessagesException.RECIPIENT_EMPTY);

@@ -126,6 +126,9 @@
   <data name="SERVICE_ID_EMPTY" xml:space="preserve">
     <value>O id do serviço não pode estar vazio.</value>
   </data>
+  <data name="SERVICE_NAME_EMPTY" xml:space="preserve">
+    <value>O nome do serviço não pode estar vazio.</value>
+  </data>
   <data name="ERROR_EMPTY" xml:space="preserve">
     <value>A mensagem de erro não pode estar vazia.</value>
   </data>

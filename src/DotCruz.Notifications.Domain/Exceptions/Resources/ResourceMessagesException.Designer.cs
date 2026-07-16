@@ -196,6 +196,15 @@ namespace DotCruz.Notifications.Domain.Exceptions.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a The service name cannot be null or empty..
+        /// </summary>
+        public static string SERVICE_NAME_EMPTY {
+            get {
+                return ResourceManager.GetString("SERVICE_NAME_EMPTY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a A template with this code and culture already exists..
         /// </summary>
         public static string TEMPLATE_ALREADY_EXISTS {

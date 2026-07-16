@@ -3,12 +3,10 @@ using CommonTestUtilities.Entities;
 using CommonTestUtilities.Entities.Notifications;
 using CommonTestUtilities.Entities.Templates;
 using DotCruz.Notifications.Application.Common.Utils;
-using DotCruz.Notifications.Domain.Entities.Tenants;
 using CommonTestUtilities.Factories;
 using CommonTestUtilities.InlineData;
 using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Services;
-using DotCruz.Notifications.Application.Common.Interfaces;
 using DotCruz.Notifications.Application.UseCases.Notifications.CreateNotification;
 using DotCruz.Notifications.Contracts.Enums.Notifications;
 using DotCruz.Notifications.Domain.Entities.Templates;
@@ -19,6 +17,8 @@ using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
 using DotCruz.Shared.Security.Context;
 using Moq;
+using DotCruz.Notifications.Application.Common.Interfaces.Messaging;
+using DotCruz.Notifications.Application.Common.Interfaces.Tenants;
 
 namespace UseCases.Test.Notifications;
 
@@ -108,14 +108,15 @@ public class CreateNotificationCommandHandlerTests
             tenantId: tenantId
         );
 
-        var tenantSettings = new TenantSettings(
+        var tenantAddress = new TenantAddressDto("Street 1", "123", null, "Neighborhood", "City", "SP", "12345678");
+        var tenantBranding = new TenantBrandingDto("https://logo.png", "#ffffff", "https://shop.com", "https://shop.com/unsub");
+        var tenantDto = new TenantDto(
             tenantId,
-            tenantName: "Shop Test",
-            tenantLogoUrl: "https://logo.png",
-            tenantWebsite: "https://shop.com",
-            tenantAddress: "Street 1",
-            unsubscribeUrl: "https://shop.com/unsub",
-            headerBackgroundColor: "#ffffff"
+            Name: "Shop Test",
+            Slug: "shop-test",
+            Status: "Active",
+            TenantAddress: tenantAddress,
+            TenantBranding: tenantBranding
         );
 
         var strategy = new NotificationFactoryStrategyBuilder(NotificationType.Email)
@@ -135,17 +136,18 @@ public class CreateNotificationCommandHandlerTests
 
         var scheduler = new Mock<INotificationScheduler>();
         
-        var tenantSettingsRepository = new Mock<ITenantSettingsRepository>();
-        tenantSettingsRepository.Setup(x => x.GetByTenantIdAsync(tenantId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(tenantSettings);
+        var tenantClient = new Mock<ITenantClient>();
+        tenantClient.Setup(x => x.GetTenantByIdAsync(tenantId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(tenantDto);
 
         var securityContext = new Mock<ISecurityContext>();
         securityContext.Setup(t => t.TenantId).Returns(tenantId);
+        securityContext.Setup(t => t.ServiceName).Returns("test-service");
 
         var handler = new CreateNotificationCommandHandler(
             repository,
             templateRepository,
-            tenantSettingsRepository.Object,
+            tenantClient.Object,
             strategies,
             publishService,
             templateEngine.Object,
@@ -174,9 +176,10 @@ public class CreateNotificationCommandHandlerTests
             .Returns<string, Dictionary<string, object>?>((raw, data) => raw);
 
         var scheduler = new Mock<INotificationScheduler>();
-        var tenantSettingsRepository = new Mock<ITenantSettingsRepository>();
+        var tenantClient = new Mock<ITenantClient>();
         var securityContext = new Mock<ISecurityContext>();
         securityContext.Setup(t => t.TenantId).Returns(Guid.NewGuid());
+        securityContext.Setup(t => t.ServiceName).Returns("test-service");
 
         if (template != null)
         {
@@ -187,7 +190,7 @@ public class CreateNotificationCommandHandlerTests
         return new CreateNotificationCommandHandler(
             repository,
             templateRepository.Build(),
-            tenantSettingsRepository.Object,
+            tenantClient.Object,
             strategies,
             publishService,
             templateEngine.Object,

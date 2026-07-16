@@ -9,7 +9,7 @@ public class EmailFactoryStrategy : INotificationFactoryStrategy
     public NotificationType Type => NotificationType.Email;
 
     public Notification Create(
-        Guid serviceId,
+        string serviceName,
         string recipient,
         string? culture,
         string? body,
@@ -20,7 +20,7 @@ public class EmailFactoryStrategy : INotificationFactoryStrategy
         Guid tenantId)
     {
         return new EmailNotification(
-            serviceId,
+            serviceName,
             recipient,
             culture,
             title ?? string.Empty,

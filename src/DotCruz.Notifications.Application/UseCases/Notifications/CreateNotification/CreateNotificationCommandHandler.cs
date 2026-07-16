@@ -1,4 +1,5 @@
-using DotCruz.Notifications.Application.Common.Interfaces;
+using DotCruz.Notifications.Application.Common.Interfaces.Messaging;
+using DotCruz.Notifications.Application.Common.Interfaces.Tenants;
 using DotCruz.Notifications.Application.Common.Utils;
 using DotCruz.Notifications.Contracts.Enums.Notifications;
 using DotCruz.Notifications.Contracts.Messages.Notifications.SendNotification;
@@ -17,7 +18,7 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly ITemplateRepository _templateRepository;
-    private readonly ITenantSettingsRepository _tenantSettingsRepository;
+    private readonly ITenantClient _tenantClient;
     private readonly IEnumerable<INotificationFactoryStrategy> _factories;
     private readonly IPublishNotificationService _publishService;
     private readonly ITemplateEngine _templateEngine;
@@ -27,7 +28,7 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
     public CreateNotificationCommandHandler(
         INotificationRepository notificationRepository,
         ITemplateRepository templateRepository,
-        ITenantSettingsRepository tenantSettingsRepository,
+        ITenantClient tenantClient,
         IEnumerable<INotificationFactoryStrategy> factories,
         IPublishNotificationService publishService,
         ITemplateEngine templateEngine,
@@ -37,7 +38,7 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
     {
         _notificationRepository = notificationRepository;
         _templateRepository = templateRepository;
-        _tenantSettingsRepository = tenantSettingsRepository;
+        _tenantClient = tenantClient;
         _factories = factories;
         _publishService = publishService;
         _templateEngine = templateEngine;
@@ -60,8 +61,12 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
         if (!tenantId.HasValue)
             throw new UnauthorizedException(ResourceMessagesException.TENANT_ID_REQUIRED);
 
+        var serviceName = _securityContext.ServiceName;
+        if (string.IsNullOrWhiteSpace(serviceName))
+            throw new UnauthorizedException(ResourceMessagesException.SERVICE_NAME_EMPTY);
+
         var notification = factory.Create(
-            message.ServiceId,
+            serviceName,
             message.Recipient,
             message.Culture,
             message.Body,
@@ -99,10 +104,20 @@ public class CreateNotificationCommandHandler : IRequestHandler<CreateNotificati
                 var wrapped = false;
                 if (notification.TenantId != Guid.Empty)
                 {
-                    var tenantSettings = await _tenantSettingsRepository.GetByTenantIdAsync(notification.TenantId, cancellationToken);
-                    if (tenantSettings != null)
+                    var tenant = await _tenantClient.GetTenantByIdAsync(notification.TenantId, cancellationToken);
+                    if (tenant != null && tenant.TenantBranding != null)
                     {
-                        var (header, footer) = EmailBrandingBuilder.GenerateBranding(tenantSettings, notification.Culture);
+                        var addressString = tenant.TenantAddress?.GetFullAddress() ?? string.Empty;
+
+                        var (header, footer) = EmailBrandingBuilder.GenerateBranding(
+                            tenant.Name,
+                            tenant.TenantBranding.LogoUrl,
+                            tenant.TenantBranding.Website,
+                            addressString,
+                            tenant.TenantBranding.UnsubscribeUrl,
+                            tenant.TenantBranding.HeaderBackgroundColor,
+                            notification.Culture);
+
                         renderedBody = $"{header}{renderedBody}{footer}";
                         wrapped = true;
                     }

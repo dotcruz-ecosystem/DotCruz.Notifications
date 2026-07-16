@@ -1,4 +1,4 @@
-namespace DotCruz.Notifications.Application.Common.Interfaces;
+namespace DotCruz.Notifications.Application.Common.Interfaces.Notification;
 
 public interface INotificationCommand
 {
