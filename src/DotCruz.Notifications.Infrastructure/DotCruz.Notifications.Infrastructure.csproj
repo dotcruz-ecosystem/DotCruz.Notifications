@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.102" />
-    <PackageReference Include="AWSSDK.SQS" Version="4.0.100.4" />
-    <PackageReference Include="AWSSDK.Scheduler" Version="4.0.100.4" />
+    <PackageReference Include="AWSSDK.SimpleSystemsManagement" Version="4.0.102.1" />
+    <PackageReference Include="AWSSDK.SQS" Version="4.0.100.5" />
+    <PackageReference Include="AWSSDK.Scheduler" Version="4.0.100.5" />
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
