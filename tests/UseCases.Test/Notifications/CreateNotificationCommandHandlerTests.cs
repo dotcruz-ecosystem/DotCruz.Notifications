@@ -19,6 +19,7 @@ using DotCruz.Shared.Security.Context;
 using Moq;
 using DotCruz.Notifications.Application.Common.Interfaces.Messaging;
 using DotCruz.Notifications.Application.Common.Interfaces.Tenants;
+using DotCruz.Notifications.Application.Common.Interfaces.Tenants.DTOs;
 
 namespace UseCases.Test.Notifications;
 

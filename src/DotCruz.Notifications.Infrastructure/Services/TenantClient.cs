@@ -1,12 +1,9 @@
 using DotCruz.Notifications.Application.Common.Interfaces.Tenants;
-using System;
+using DotCruz.Notifications.Application.Common.Interfaces.Tenants.DTOs;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DotCruz.Notifications.Infrastructure.Services;
 
