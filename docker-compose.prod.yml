@@ -4,7 +4,7 @@ services:
     container_name: dotcruz-notifications-api
     restart: unless-stopped
     ports:
-      - "5050:8080"
+      - "127.0.0.1:5050:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Settings__ServiceAuth__Self__Name=Notifications
