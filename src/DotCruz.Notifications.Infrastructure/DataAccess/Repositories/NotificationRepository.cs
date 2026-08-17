@@ -1,5 +1,7 @@
 using DotCruz.Notifications.Domain.Entities.Notifications;
 using DotCruz.Notifications.Domain.Enums.Notifications;
+using DotCruz.Notifications.Domain.Exceptions.BaseExceptions;
+using DotCruz.Notifications.Domain.Exceptions.Resources;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
 using DotCruz.Shared.Security.Context;
 using MongoDB.Driver;
@@ -24,30 +26,43 @@ public class NotificationRepository : INotificationRepository
 
     public async Task<Notification?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var tenantId = _securityContext.TenantId;
+        var tenantId = RequireTenantId();
+
         return await _context.Notifications
-            .Find(n => n.Id == id && (tenantId == null || n.TenantId == tenantId))
+            .Find(n => n.Id == id && n.TenantId == tenantId)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Notification>> GetPendingScheduledAsync(DateTimeOffset referenceDate, int limit, CancellationToken cancellationToken)
     {
-        var tenantId = _securityContext.TenantId;
+        var tenantId = RequireTenantId();
+
         return await _context.Notifications
-            .Find(n => n.Status == NotificationStatus.Pending && 
-                       n.ScheduledFor != null && 
+            .Find(n => n.Status == NotificationStatus.Pending &&
+                       n.ScheduledFor != null &&
                        n.ScheduledFor <= referenceDate &&
-                       (tenantId == null || n.TenantId == tenantId))
+                       n.TenantId == tenantId)
             .Limit(limit)
             .ToListAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(Notification notification, CancellationToken cancellationToken)
     {
-        var tenantId = _securityContext.TenantId;
+        var tenantId = RequireTenantId();
+
         await _context.Notifications.ReplaceOneAsync(
-            n => n.Id == notification.Id && (tenantId == null || n.TenantId == tenantId),
+            n => n.Id == notification.Id && n.TenantId == tenantId,
             notification,
             cancellationToken: cancellationToken);
+    }
+
+    private Guid RequireTenantId()
+    {
+        var tenantId = _securityContext.TenantId;
+
+        if (!tenantId.HasValue || tenantId.Value == Guid.Empty)
+            throw new UnauthorizedException(ResourceMessagesException.TENANT_ID_REQUIRED);
+
+        return tenantId.Value;
     }
 }
