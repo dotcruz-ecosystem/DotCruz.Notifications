@@ -47,6 +47,10 @@ public static class DependencyInjection
             {
                 client.BaseAddress = new Uri(baseAddress);
             }
+            else
+            {
+                client.BaseAddress = new Uri("http://dotcruz-tenants-api:8080/");
+            }
         })
         .AddServiceApiKeyPropagation();
     }

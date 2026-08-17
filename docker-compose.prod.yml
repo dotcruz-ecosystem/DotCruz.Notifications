@@ -22,6 +22,7 @@ services:
       - Settings__Jwt__Issuer=${JWT_ISSUER}
       - Settings__Jwt__Audience=${JWT_AUDIENCE}
       - Settings__Jwt__JwksUrl=${JWT_JWKS_URL}
+      - Settings__Tenants__BaseAddress=${TENANT_BASE_URL}
     networks:
       - dotcruz_net
     deploy:
