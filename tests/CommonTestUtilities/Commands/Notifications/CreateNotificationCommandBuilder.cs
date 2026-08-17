@@ -8,7 +8,6 @@ namespace CommonTestUtilities.Commands.Notifications;
 public class CreateNotificationCommandBuilder
 {
     public static CreateNotificationCommand Build(
-        Guid? serviceId = null,
         IntegrationNotificationType? type = null,
         string? recipient = null,
         string? culture = null,

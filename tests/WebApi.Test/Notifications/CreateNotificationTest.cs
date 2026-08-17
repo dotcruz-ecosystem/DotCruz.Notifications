@@ -108,24 +108,6 @@ public class CreateNotificationTest : NotificationClassFixture
 
     [Theory]
     [ClassData(typeof(CultureInlineDataTest))]
-    public async Task Error_Empty_ServiceId(string culture)
-    {
-        var command = CreateNotificationCommandBuilder.Build(serviceId: Guid.Empty);
-
-        var response = await DoPost(ENDPOINT, command.Message, token: _apiToken, culture: culture);
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-
-        var responseData = await response.Content.ReadFromJsonAsync<ErrorResponseDto>(cancellationToken: TestContext.Current.CancellationToken);
-
-        var expectedMessage = ResourceMessagesException.ResourceManager.GetString("SERVICE_ID_EMPTY", new CultureInfo(culture));
-
-        Assert.NotNull(responseData);
-        Assert.Contains(expectedMessage, responseData.Errors);
-    }
-
-    [Theory]
-    [ClassData(typeof(CultureInlineDataTest))]
     public async Task Error_Body_And_Template_Empty(string culture)
     {
         var command = CreateNotificationCommandBuilder.Build(body: string.Empty, templateCode: null);
@@ -194,5 +176,15 @@ public class CreateNotificationTest : NotificationClassFixture
 
         Assert.NotNull(responseData);
         Assert.Contains(expectedMessage, responseData.Errors);
+    }
+
+    [Fact]
+    public async Task Error_Missing_Tenant_Header()
+    {
+        var command = CreateNotificationCommandBuilder.Build(type: IntegrationNotificationType.Email);
+
+        var response = await DoPost(ENDPOINT, command.Message, token: _apiToken, includeTenant: false);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }
