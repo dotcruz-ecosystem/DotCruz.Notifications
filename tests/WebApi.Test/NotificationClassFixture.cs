@@ -25,11 +25,12 @@ public class NotificationClassFixture : IClassFixture<CustomWebApplicationFactor
         string endpoint,
         object request,
         string token = "",
-        string culture = "en"
+        string culture = "en",
+        bool includeTenant = true
     )
     {
         ChangeRequestCulture(culture);
-        AuthorizeRequest(token);
+        AuthorizeRequest(token, includeTenant);
 
         return await _httpClient.PostAsJsonAsync(endpoint, request, JsonSerializerOptions);
     }
@@ -56,7 +57,7 @@ public class NotificationClassFixture : IClassFixture<CustomWebApplicationFactor
         _httpClient.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(culture));
     }
 
-    private void AuthorizeRequest(string token)
+    private void AuthorizeRequest(string token, bool includeTenant = true)
     {
         _httpClient.DefaultRequestHeaders.Remove("X-Api-Key");
         _httpClient.DefaultRequestHeaders.Remove("X-Tenant-ID");
@@ -66,7 +67,9 @@ public class NotificationClassFixture : IClassFixture<CustomWebApplicationFactor
             return;
 
         _httpClient.DefaultRequestHeaders.Add("X-Api-Key", token);
-        _httpClient.DefaultRequestHeaders.Add("X-Tenant-ID", _factory.TenantId.ToString());
         _httpClient.DefaultRequestHeaders.Add("X-Service-Name", "CoreAuth");
+
+        if (includeTenant)
+            _httpClient.DefaultRequestHeaders.Add("X-Tenant-ID", _factory.TenantId.ToString());
     }
 }
