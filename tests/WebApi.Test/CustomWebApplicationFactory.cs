@@ -1,9 +1,7 @@
 using CommonTestUtilities.Entities;
-using CommonTestUtilities.Entities.Templates;
+using CommonTestUtilities.Repositories;
 using DotCruz.Notifications.Application.Common.Interfaces.Messaging;
-using DotCruz.Notifications.CrossCutting.Settings;
-using DotCruz.Notifications.Domain.Entities.Notifications;
-using DotCruz.Notifications.Domain.Entities.Templates;
+using DotCruz.Notifications.Application.Common.Interfaces.Tenants;
 using DotCruz.Notifications.Domain.Enums.Notifications;
 using DotCruz.Notifications.Domain.Interfaces;
 using DotCruz.Notifications.Domain.Interfaces.Repositories;
@@ -12,7 +10,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace WebApi.Test;
@@ -20,10 +17,9 @@ namespace WebApi.Test;
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     public Guid TenantId { get; } = Guid.NewGuid();
-    private Notification _notification = default!;
+
+    private readonly InMemoryNotificationStore _store = new();
     private string _apiToken = default!;
-    private readonly string _databaseName = "Notifications_Test_" + Guid.NewGuid().ToString("N");
-    private string? _databaseConnectionString = null;
 
     public CustomWebApplicationFactory()
     {
@@ -39,7 +35,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Test")
             .ConfigureServices(services =>
             {
-                var serviceProvider = services.BuildServiceProvider();
+                using var serviceProvider = services.BuildServiceProvider();
                 var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
                 var testApiKey = configuration.GetValue<string>("Settings:ApiKey")!;
@@ -51,76 +47,54 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                         options.Keys["CoreAuth"] = testApiKey;
                     });
 
-                _databaseConnectionString = configuration.GetConnectionString("MongoDb");
-
-                if (string.IsNullOrEmpty(_databaseConnectionString))
-                    throw new InvalidOperationException("Could not find connection string for tests");
-
                 RemoveService<IMongoClient>(services);
-                RemoveService<IOptions<MongoDbSettings>>(services);
                 RemoveService<NotificationDbContext>(services);
+                RemoveService<INotificationRepository>(services);
                 RemoveService<IPublishNotificationService>(services);
                 RemoveService<INotificationScheduler>(services);
+                RemoveService<ITenantClient>(services);
 
-                var mongoClient = new MongoClient(_databaseConnectionString);
-                services.AddSingleton<IMongoClient>(mongoClient);
+                services.AddSingleton(_store);
+                services.AddScoped<INotificationRepository, InMemoryNotificationRepository>();
 
-                services.Configure<MongoDbSettings>(options =>
-                {
-                    options.DatabaseName = _databaseName;
-                });
+                services.AddSingleton(new Moq.Mock<IPublishNotificationService>().Object);
+                services.AddSingleton(new Moq.Mock<INotificationScheduler>().Object);
+                services.AddSingleton(new Moq.Mock<ITenantClient>().Object);
 
-                services.AddSingleton<NotificationDbContext>();
-
-                var publishServiceMock = new Moq.Mock<IPublishNotificationService>();
-                var schedulerMock = new Moq.Mock<INotificationScheduler>();
-
-                services.AddSingleton(publishServiceMock.Object);
-                services.AddSingleton(schedulerMock.Object);
-
-                using var scope = services.BuildServiceProvider().CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
-
-                StartDatabase(dbContext);
+                SeedNotifications();
                 SetApiToken(configuration);
             });
     }
 
     private static void RemoveService<T>(IServiceCollection services)
     {
-        var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(T));
-        if (descriptor is not null)
+        var descriptors = services.Where(d => d.ServiceType == typeof(T)).ToList();
+
+        foreach (var descriptor in descriptors)
             services.Remove(descriptor);
     }
 
     public Guid GetTemplateId()
     {
         using var scope = Services.CreateScope();
-        var repo = scope.ServiceProvider.GetRequiredService<ITemplateRepository>();
-        var template = repo.GetByCodeAsync("CreateUserCommand", "pt-BR", CancellationToken.None).GetAwaiter().GetResult();
+        var repository = scope.ServiceProvider.GetRequiredService<ITemplateRepository>();
+        var template = repository.GetByCodeAsync("CreateUserCommand", "pt-BR", CancellationToken.None)
+            .GetAwaiter()
+            .GetResult();
+
         return template?.Id ?? Guid.Empty;
     }
 
     public string GetTemplateCode() => "CreateUserCommand";
+
     public string GetApiToken() => _apiToken;
 
-    private void StartDatabase(NotificationDbContext dbContext)
+    private void SeedNotifications()
     {
-        _notification = NotificationBuilder.Build(NotificationType.Email, tenantId: TenantId);
-        dbContext.Notifications.InsertOne(_notification);
+        var notification = NotificationBuilder.Build(NotificationType.Email, tenantId: TenantId);
+        _store.Notifications[notification.Id] = notification;
     }
 
     private void SetApiToken(IConfiguration configuration)
-        =>  _apiToken = configuration.GetValue<string>("Settings:ApiKey")!;
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            var mongoClient = new MongoClient(_databaseConnectionString);
-            mongoClient.DropDatabase(_databaseName);
-        }
-
-        base.Dispose(disposing);
-    }
+        => _apiToken = configuration.GetValue<string>("Settings:ApiKey")!;
 }
